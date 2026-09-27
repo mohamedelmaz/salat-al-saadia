@@ -1,0 +1,97 @@
+﻿name: salat_al_saadia
+description: "ØµÙ„Ø§Ø©-Ø§Ù„Ø³Ø¹Ø¯ÙŠØ© - A comprehensive Islamic application for Prayer Times, Quran, Adhkar, Qibla, and Tasbeeh."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.6.1
+
+  # Islamic Calculations & Sensors
+  adhan: ^2.0.0+1
+  flutter_qiblah: ^3.2.0
+  geolocator: ^14.0.3
+  # Direct dependency (already pulled in transitively by flutter_qiblah) so the
+  # compass accuracy reported by the magnetometer can drive the calibration hint.
+  flutter_compass_v2: ^1.0.3
+
+  # Media, Audio & Sensors
+  # just_audio replaces audioplayers for Quran recitation: it exposes a proper
+  # buffering/processing state machine (needed for a "loading" indicator) and an
+  # errorStream (needed for the SnackBar error handling). Both are free & OSS
+  # (Apache-2.0 / MIT).
+  just_audio: ^0.10.6
+  audio_session: ^0.2.2
+  vibration: ^3.2.1
+
+  # Quran Text, Metadata & Recitation URLs (MIT, ships the Uthmani text offline).
+  # Pinned to 1.3.1 on purpose: 1.3.2+ depend on flutter_lints ^5/^6, which our
+  # ^4.0.0 dev_dependency cannot co-resolve with. 1.3.1 is the newest release
+  # that is compatible with this project's lint set.
+  quran: ^1.3.1
+
+  # Magnetic declination (World Magnetic Model, MIT, pure Dart).
+  # flutter_compass_v2 reports the magnetic azimuth, while the Qibla bearing is
+  # relative to TRUE north; without this correction the needle is off by the
+  # local declination (up to ~13 degrees in some regions).
+  geomag: ^0.3.0
+
+  # UI, Fonts & Icons
+  google_fonts: ^8.2.1
+  flutter_svg: ^2.3.0
+
+  # Local Persistence
+  shared_preferences: ^2.5.5
+
+  # Local Notifications & Timezone
+  flutter_local_notifications: ^22.3.1
+  timezone: ^0.11.1
+  intl: ^0.20.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
+
+# Local, patched copies of the two Qibla-related plugins.
+# Published versions ship Android build files pinned to old AGP/compileSdk values that break the
+# current AGP 9 / Gradle 9 toolchain and modern androidx AAR metadata checks.
+# Both patched copies live next to the project directory and only differ in their Android build files.
+# Local patched versions required for AGP 9 compatibility (see BUILD_NOTES.md).
+# These two directories live OUTSIDE this repository (../flutter_qiblah_local and
+# ../flutter_compass_v2_local) and are therefore NOT pushed to GitHub. Anyone
+# cloning this repo must obtain the patched copies separately before
+# `flutter pub get` will succeed — see BUILD_NOTES.md item 1.
+dependency_overrides:
+  flutter_qiblah:
+    path: ../flutter_qiblah_local
+  flutter_compass_v2:
+    path: ../flutter_compass_v2_local
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/app_icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#0F5132"
+  adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
+    - assets/images/
+    - assets/audio/
+    # Optional Quranic typeface: `QuranFonts.ensureLoaded()` registers the first
+    # file it finds here (see assets/fonts/README.md for the download links).
+    - assets/fonts/
+
